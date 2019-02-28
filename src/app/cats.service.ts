@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class CatsService {
 
-  private rootUrl = 'https://api.thecatapi.com/v1/breeds/search';
+  private rootUrl = 'https://api.thecatapi.com/v1/breeds/';
 
   constructor(private httpService: HttpClient) { }
 
   getCats(term: string) {
-    return this.httpService.get(this.rootUrl, {params: {q: term}});
+    const url = term ? `${this.rootUrl}search/` : this.rootUrl;
+    const params = term ? {params: {q: term}} : undefined;
+    return this.httpService.get(url, params);
   }
 }

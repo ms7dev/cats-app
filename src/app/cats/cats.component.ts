@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CatsService } from '../cats.service';
-import { Subscription, Subject } from 'rxjs'
+import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -11,37 +11,38 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class CatsComponent implements OnInit, OnDestroy {
 
   catsList;
-  sub: Subscription;
+  getCatsSub: Subscription;
+  searchTextSub: Subscription;
   searchTextChanged: Subject<string> = new Subject();
 
   constructor(private service: CatsService) { }
 
   ngOnInit() {
-   this.getCats('hta');
+    this.getCats('');
 
-    this.searchTextChanged
+    this.searchTextSub = this.searchTextChanged
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-      ).subscribe((term) => {
+      )
+      .subscribe((term) => {
         this.getCats(term);
       });
   }
 
   getCats(term) {
-    this.service.getCats(term)
+    this.getCatsSub = this.service.getCats(term)
       .subscribe((data) => {
         this.catsList = data;
-    });;
-  }
-
-  onChange(term) {
-    this.searchTextChanged.next(term);
+    });
   }
 
   ngOnDestroy() {
-    if (this.sub) {
-      this.sub.unsubscribe();
+    if (this.getCatsSub) {
+      this.getCatsSub.unsubscribe();
+    }
+    if (this.getCatsSub) {
+      this.getCatsSub.unsubscribe();
     }
   }
 }
