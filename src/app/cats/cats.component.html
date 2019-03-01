@@ -1,4 +1,4 @@
-<input type="text" (keyup)="searchTextChanged.next($event.target.value)"/>
+<input type="text" [formControl]="searchField"/>
 <ul>
   <li *ngFor="let cat of catsList">
     {{cat.name}}

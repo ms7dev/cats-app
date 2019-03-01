@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CatsService } from '../cats.service';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-cats',
@@ -12,15 +13,14 @@ export class CatsComponent implements OnInit, OnDestroy {
 
   catsList;
   getCatsSub: Subscription;
-  searchTextSub: Subscription;
-  searchTextChanged: Subject<string> = new Subject();
+  searchField: FormControl = new FormControl();
 
   constructor(private service: CatsService) { }
 
   ngOnInit() {
     this.getCats('');
 
-    this.searchTextSub = this.searchTextChanged
+    this.searchField.valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
@@ -38,9 +38,6 @@ export class CatsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getCatsSub) {
-      this.getCatsSub.unsubscribe();
-    }
     if (this.getCatsSub) {
       this.getCatsSub.unsubscribe();
     }
