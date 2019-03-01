@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CatsService } from '../cats.service';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subscription, fromEvent } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cats',
@@ -12,18 +12,20 @@ export class CatsComponent implements OnInit, OnDestroy {
 
   catsList;
   getCatsSub: Subscription;
-  searchTextSub: Subscription;
-  searchTextChanged: Subject<string> = new Subject();
+  searchFieldSub: Subscription;
+
+  @ViewChild('searchField') searchField: ElementRef;
 
   constructor(private service: CatsService) { }
 
   ngOnInit() {
     this.getCats('');
 
-    this.searchTextSub = this.searchTextChanged
+    this.searchFieldSub = fromEvent(this.searchField.nativeElement, 'keyup')
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
+        map((searchField: any) => searchField.target.value),
       )
       .subscribe((term) => {
         this.getCats(term);
@@ -38,8 +40,8 @@ export class CatsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getCatsSub) {
-      this.getCatsSub.unsubscribe();
+    if (this.searchFieldSub) {
+      this.searchFieldSub.unsubscribe();
     }
     if (this.getCatsSub) {
       this.getCatsSub.unsubscribe();
