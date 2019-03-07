@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {delay} from 'rxjs/operators';
 
 @Injectable()
 export class CatsService {
@@ -11,6 +12,8 @@ export class CatsService {
   getCats(term: string) {
     const url = term ? `${this.rootUrl}search/` : this.rootUrl;
     const params = term ? {params: {q: term}} : undefined;
-    return this.httpService.get(url, params);
+    return this.httpService.get(url, params).pipe(
+        delay(Math.random() * 5000)
+    );
   }
 }
