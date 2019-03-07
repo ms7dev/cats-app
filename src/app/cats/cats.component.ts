@@ -23,9 +23,9 @@ export class CatsComponent implements OnInit, OnDestroy {
 
     this.searchFieldSub = fromEvent(this.searchField.nativeElement, 'keyup')
       .pipe(
+        map((searchField: any) => searchField.target.value),
         debounceTime(300),
         distinctUntilChanged(),
-        map((searchField: any) => searchField.target.value),
       )
       .subscribe((term) => {
         this.getCats(term);
