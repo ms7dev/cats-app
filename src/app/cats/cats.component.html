@@ -1,4 +1,5 @@
-<input type="text" (keyup)="searchTextChanged.next($event.target.value)"/>
+<input type="text" [(ngModel)]="searchTerm" (keyup)="searchTextChanged.next($event.target.value)"/>
+<button type="button" (click)="onSearch()">Search</button>
 <ul>
   <li *ngFor="let cat of catsList">
     {{cat.name}}
